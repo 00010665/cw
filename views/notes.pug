@@ -1,0 +1,17 @@
+extends layout.pug
+
+block content
+  main.content
+    h1.note-title All notes
+
+    if deleteNote 
+      p.success The note with id #{deletedNote} is deleted! 
+    
+    if noteList
+      each value in noteList
+        div.note-wrapper
+          a.note(href=`/notes/${ value.id }`)= value.title
+          a.delete(href=`/notes/${ value.id }/delete`) Delete
+    
+    else 
+      H3 No any notes
