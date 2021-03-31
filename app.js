@@ -10,6 +10,10 @@ const DB = './data/notes.json'
 app.use('/static', express.static('public'))
 app.use(express.urlencoded({ extended: false }))
 
+const notesRouter = require('./routes/notes.js')
+
+app.use('/notes', notesRouter)
+
 app.get('/', (req, res) => {
 	res.render('home')
 })
@@ -49,16 +53,7 @@ app.post('/create', (req, res) => {
 })
 
 
-app.get('/notes', (req, res) => {
 
-	fs.readFile(DB, (err, data) => {
-		if (err) throw err
-
-		const notes = JSON.parse(data)
-
-		res.render('notes', { noteList: notes.length == 0 ? false: notes })
-	})
-})
 
 app.get('/api/v1/notes', (req, res) => {
 
@@ -69,43 +64,6 @@ app.get('/api/v1/notes', (req, res) => {
 
 		res.json(notes)
 	})
-})
-
-app.get('/notes/:id', (req, res) => {
-
-	const id = req.params.id
-
-	fs.readFile(DB, (err, data) => {
-		if (err) throw err
-
-		const notes = JSON.parse(data)
-
-		const note = notes.filter(note => note.id == id)[0]
-	
-        res.render('detail', { noteDetail: note })
-
-		
-	})
-})
-
-app.get('/notes/:id/delete', (req, res) =>{
-
-	const id = req.params.id
-
-	fs.readFile(DB, (err, data) =>{
-		if (err) throw err
-
-		const notes = JSON.parse(data)
-
-		const filteredNotes = notes.filter(note => note.id != id)
-
-		fs.writeFile(DB, JSON.stringify(filteredNotes), err =>{
-			if (err) throw err
-
-			res.render('notes', { noteList: filteredNotes, deletedNote: id })
-		})
-	} )
-
 })
 
 app.listen(8000, err => {
